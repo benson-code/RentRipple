@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>QR Code 生成測試</h1>
+
+    <div class="qr-container">
+        <canvas id="qr-canvas"></canvas>
+    </div>
+
+    <p>LINE 連結: <a href="https://lin.ee/2pgJUhA" target="_blank">https://lin.ee/2pgJUhA</a></p>
+
+    <script>
+        // 生成 QR Code
+        QRCode.toCanvas(document.getElementById('qr-canvas'), 'https://lin.ee/2pgJUhA', {
+            width: 256,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            }
+        }, function (error) {
+            if (error) {
+                console.error('QR Code 生成失敗:', error);
+                document.getElementById('qr-canvas').style.display = 'none';
+                document.querySelector('.qr-container').innerHTML = '<p style="color: red;">QR Code 生成失敗</p>';
+            } else {
+                console.log('QR Code 生成成功!');
+            }
+        });
+    </script>
+</body>
+</html>

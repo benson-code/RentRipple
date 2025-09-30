@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖片上傳測試</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056CC;
+        }
+        .test-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .result {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #34C759;
+        }
+        .error {
+            border-left: 4px solid #FF3B30;
+        }
+        .warning {
+            border-left: 4px solid #FF9500;
+        }
+        input[type="file"] {
+            background: #3a3a3a;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>RentRipple 圖片上傳功能測試</h1>
+
+    <div class="test-section">
+        <h2>🎯 Production Environment Test</h2>
+        <p>測試環境：<span id="api-url">https://bangkokmrt.vercel.app</span></p>
+        <div>
+            <input type="file" id="test-file" accept="image/*" />
+            <button class="test-button" onclick="testNormalUpload()">測試正常上傳</button>
+            <button class="test-button" onclick="testLargeFileUpload()">測試大檔案 (>5MB)</button>
+            <button class="test-button" onclick="testUnsupportedFormat()">測試不支援格式</button>
+            <button class="test-button" onclick="testEmptyFile()">測試空檔案</button>
+            <button class="test-button" onclick="testLongFilename()">測試超長檔名</button>
+        </div>
+        <div id="upload-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 批量測試</h2>
+        <button class="test-button" onclick="runAllTests()" id="batch-test-btn">執行所有測試</button>
+        <button class="test-button" onclick="testConcurrentUploads()">測試併發上傳</button>
+        <div id="batch-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 網路測試</h2>
+        <button class="test-button" onclick="testNetworkFailure()">模擬網路失敗</button>
+        <button class="test-button" onclick="testCORSHeaders()">測試 CORS</button>
+        <button class="test-button" onclick="testAPIEndpoint()">測試 API 端點</button>
+        <div id="network-result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://bangkokmrt.vercel.app';
+
+        function log(message, type = 'info', containerId = 'upload-result') {
+            const container = document.getElementById(containerId);
+            container.style.display = 'block';
+            container.className = `result ${type}`;
+            container.textContent += `[${new Date().toLocaleTimeString()}] ${message}\n`;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearLog(containerId = 'upload-result') {
+            const container = document.getElementById(containerId);
+            container.textContent = '';
+            container.style.display = 'none';
+        }
+
+        // 創建測試圖片
+        function createTestImage(width = 100, height = 100, format = 'png') {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // 創建漸層背景
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, '#FF6B6B');
+            gradient.addColorStop(1, '#4ECDC4');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // 添加文字
+            ctx.fillStyle = 'white';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('TEST', width/2, height/2);
+
+            return canvas.toDataURL(`image/${format}`);
+        }
+
+        // 測試正常上傳
+        async function testNormalUpload() {
+            clearLog();
+            const fileInput = document.getElementById('test-file');
+
+            try {
+                let imageData, imageName;
+
+                if (fileInput.files.length > 0) {
+                    // 使用用戶選擇的檔案
+                    const file = fileInput.files[0];
+                    imageName = file.name;
+
+                    const reader = new FileReader();
+                    imageData = await new Promise((resolve) => {
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+
+                    log(`使用用戶檔案: ${imageName} (${(file.size / 1024).toFixed(2)} KB)`);
+                } else {
+                    // 創建測試圖片
+                    imageData = createTestImage(300, 200, 'png');
+                    imageName = 'test-normal-upload.png';
+                    log('使用自動生成的測試圖片');
+                }
+
+                log('開始上傳...');
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    log(`✅ 上傳成功!`, 'success');
+                    log(`URL: ${result.url}`, 'success');
+                    log(`檔案名: ${result.fileName}`, 'success');
+
+                    // 測試圖片是否可以訪問
+                    const img = new Image();
+                    img.onload = () => log('✅ 圖片可正常訪問', 'success');
+                    img.onerror = () => log('❌ 圖片無法訪問', 'error');
+                    img.src = result.url;
+                } else {
+                    log(`❌ 上傳失敗: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ 錯誤: ${error.message}`, 'error');
+            }
+        }
+
+        // 測試大檔案上傳
+        async function testLargeFileUpload() {
+            clearLog();
+            log('創建大檔案 (>5MB)...');
+
+            // 創建大圖片 (6MB+)
+            const imageData = createTestImage(3000, 2000, 'png');
+            const imageName = 'test-large-file.png';
+
+            const sizeInMB = (imageData.length * 0.75) / (1024 * 1024); // base64 約為原始大小的 4/3
+            log(`檔案大小: ${sizeInMB.toFixed(2)} MB`);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    log(`❌ 預期應該失敗但卻成功了`, 'warning');
+                } else {
+                    log(`✅ 正確拒絕大檔案: ${result.error}`, 'success');
+                }
+            } catch (error) {
+                log(`✅ 正確處理錯誤: ${error.message}`, 'success');
+            }
+        }
+
+        // 測試不支援格式
+        async function testUnsupportedFormat() {
+            clearLog();
+            log('測試不支援的檔案格式...');
+
+            // 創建假的 PDF 格式
+            const imageData = 'data:application/pdf;base64,JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwo+PgplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvUGFnZXMKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKPj4KZW5kb2JqCnhyZWYKMCA0CjAwMDAwMDAwMDAgNjU1MzUgZiAKdHJhaWxlcgo8PAovU2l6ZSA0Cj4+CnN0YXJ0eHJlZgo5CiUlRU9G';
+            const imageName = 'test-unsupported.pdf';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    log(`❌ 預期應該失敗但卻成功了`, 'warning');
+                } else {
+                    log(`✅ 正確拒絕不支援格式: ${result.error}`, 'success');
+                }
+            } catch (error) {
+                log(`✅ 正確處理錯誤: ${error.message}`, 'success');
+            }
+        }
+
+        // 測試空檔案
+        async function testEmptyFile() {
+            clearLog();
+            log('測試空檔案...');
+
+            const imageData = 'data:image/png;base64,';
+            const imageName = 'test-empty.png';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    log(`❌ 預期應該失敗但卻成功了`, 'warning');
+                } else {
+                    log(`✅ 正確拒絕空檔案: ${result.error}`, 'success');
+                }
+            } catch (error) {
+                log(`✅ 正確處理錯誤: ${error.message}`, 'success');
+            }
+        }
+
+        // 測試超長檔名
+        async function testLongFilename() {
+            clearLog();
+            log('測試超長檔名...');
+
+            const imageData = createTestImage(100, 100, 'png');
+            const imageName = 'a'.repeat(150) + '.png'; // 150 字元檔名
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    log(`❌ 預期應該失敗但卻成功了`, 'warning');
+                } else {
+                    log(`✅ 正確拒絕超長檔名: ${result.error}`, 'success');
+                }
+            } catch (error) {
+                log(`✅ 正確處理錯誤: ${error.message}`, 'success');
+            }
+        }
+
+        // 測試併發上傳
+        async function testConcurrentUploads() {
+            clearLog('batch-result');
+            log('測試併發上傳 (5 個同時上傳)...', 'info', 'batch-result');
+
+            const promises = [];
+            for (let i = 0; i < 5; i++) {
+                const imageData = createTestImage(200, 150, 'png');
+                const imageName = `concurrent-test-${i + 1}.png`;
+
+                const promise = fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageData, imageName })
+                });
+                promises.push(promise);
+            }
+
+            try {
+                const results = await Promise.allSettled(promises);
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].status === 'fulfilled') {
+                        const response = results[i].value;
+                        if (response.ok) {
+                            successCount++;
+                            log(`✅ 併發上傳 ${i + 1} 成功`, 'success', 'batch-result');
+                        } else {
+                            errorCount++;
+                            const error = await response.json();
+                            log(`❌ 併發上傳 ${i + 1} 失敗: ${error.error}`, 'error', 'batch-result');
+                        }
+                    } else {
+                        errorCount++;
+                        log(`❌ 併發上傳 ${i + 1} 錯誤: ${results[i].reason}`, 'error', 'batch-result');
+                    }
+                }
+
+                log(`\n併發測試結果: ${successCount} 成功, ${errorCount} 失敗`, 'info', 'batch-result');
+            } catch (error) {
+                log(`❌ 併發測試錯誤: ${error.message}`, 'error', 'batch-result');
+            }
+        }
+
+        // 執行所有測試
+        async function runAllTests() {
+            const button = document.getElementById('batch-test-btn');
+            button.disabled = true;
+            button.textContent = '執行中...';
+
+            clearLog('batch-result');
+            log('開始執行所有測試...', 'info', 'batch-result');
+
+            const tests = [
+                { name: '正常上傳', func: testNormalUpload },
+                { name: '大檔案上傳', func: testLargeFileUpload },
+                { name: '不支援格式', func: testUnsupportedFormat },
+                { name: '空檔案', func: testEmptyFile },
+                { name: '超長檔名', func: testLongFilename }
+            ];
+
+            for (const test of tests) {
+                log(`\n--- ${test.name} ---`, 'info', 'batch-result');
+                try {
+                    await test.func();
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // 間隔 1 秒
+                } catch (error) {
+                    log(`❌ ${test.name} 測試失敗: ${error.message}`, 'error', 'batch-result');
+                }
+            }
+
+            log('\n✅ 所有測試完成!', 'success', 'batch-result');
+            button.disabled = false;
+            button.textContent = '執行所有測試';
+        }
+
+        // 測試 API 端點
+        async function testAPIEndpoint() {
+            clearLog('network-result');
+            log('測試 API 端點可用性...', 'info', 'network-result');
+
+            try {
+                // 測試 OPTIONS 請求
+                const optionsResponse = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'OPTIONS'
+                });
+
+                if (optionsResponse.ok) {
+                    log('✅ OPTIONS 請求成功', 'success', 'network-result');
+                    log(`CORS 標頭: ${optionsResponse.headers.get('Access-Control-Allow-Origin')}`, 'info', 'network-result');
+                } else {
+                    log('❌ OPTIONS 請求失敗', 'error', 'network-result');
+                }
+
+                // 測試錯誤的請求方法
+                const getResponse = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'GET'
+                });
+
+                if (getResponse.status === 405) {
+                    log('✅ 正確拒絕 GET 請求', 'success', 'network-result');
+                } else {
+                    log('❌ GET 請求應該被拒絕', 'error', 'network-result');
+                }
+
+            } catch (error) {
+                log(`❌ 網路測試錯誤: ${error.message}`, 'error', 'network-result');
+            }
+        }
+
+        // 測試 CORS
+        async function testCORSHeaders() {
+            clearLog('network-result');
+            log('測試 CORS 標頭...', 'info', 'network-result');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin
+                    }
+                });
+
+                log(`狀態碼: ${response.status}`, 'info', 'network-result');
+                log(`Access-Control-Allow-Origin: ${response.headers.get('Access-Control-Allow-Origin')}`, 'info', 'network-result');
+                log(`Access-Control-Allow-Methods: ${response.headers.get('Access-Control-Allow-Methods')}`, 'info', 'network-result');
+                log(`Access-Control-Allow-Headers: ${response.headers.get('Access-Control-Allow-Headers')}`, 'info', 'network-result');
+
+            } catch (error) {
+                log(`❌ CORS 測試錯誤: ${error.message}`, 'error', 'network-result');
+            }
+        }
+
+        // 模擬網路失敗
+        async function testNetworkFailure() {
+            clearLog('network-result');
+            log('模擬網路失敗...', 'info', 'network-result');
+
+            const controller = new AbortController();
+            setTimeout(() => controller.abort(), 100); // 100ms 後取消請求
+
+            try {
+                const imageData = createTestImage(100, 100, 'png');
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        imageData,
+                        imageName: 'network-test.png'
+                    }),
+                    signal: controller.signal
+                });
+
+                log('❌ 請求應該被取消', 'error', 'network-result');
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    log('✅ 正確處理網路中斷', 'success', 'network-result');
+                } else {
+                    log(`✅ 正確處理網路錯誤: ${error.message}`, 'success', 'network-result');
+                }
+            }
+        }
+
+        // 頁面載入時顯示API URL
+        document.getElementById('api-url').textContent = API_BASE;
+    </script>
+</body>
+</html>

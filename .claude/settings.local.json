@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(tree:*)",
+      "Read(//c/Users/PC/Desktop/**)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel domains:*)",
+      "Bash(npm run build:*)",
+      "Bash(vercel:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:mrt-rent.vercel.app)",
+      "WebFetch(domain:rentripple-hfpzzodi4-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:rentripple-7wdzonhcj-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:bangkokmrt.vercel.app)",
+      "WebSearch",
+      "Bash(npm install:*)",
+      "Bash(npm audit:*)",
+      "WebFetch(domain:bangkokmrt-e02x4h5zg-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:bangkokmrt-kusbn8nwp-ethan-alexander-warricks-projects.vercel.app)",
+      "Bash(npx vercel env pull:*)",
+      "Bash(npx vercel env:*)",
+      "Bash(npx vercel:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:qr-official.line.me)",
+      "WebFetch(domain:bangkokmrt-1yvtlm15r-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:bangkokmrt-p06n8vk97-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:bangkokmrt-e65evbivh-ethan-alexander-warricks-projects.vercel.app)",
+      "WebFetch(domain:bangkokmrt-7mbbfkueq-ethan-alexander-warricks-projects.vercel.app)",
+      "Bash(dir:*)",
+      "Bash(rm:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

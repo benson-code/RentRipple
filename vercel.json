@@ -1,0 +1,9 @@
+{
+  "name": "bangkokmrt",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
