@@ -30,30 +30,30 @@ const PropertyDetails = ({ property, showOnlyMain, showOnlyDescription, isFullsc
 
           {/* Property features */}
           <div className="mt-4 border-t border-ios-dark-separator pt-4">
-            <div className="grid grid-cols-4 gap-1 text-base text-ios-dark-label">
-              <div className="flex items-center justify-center space-x-1">
+            <div className="grid grid-cols-4 gap-2 text-base text-ios-dark-label">
+              <div className="flex flex-col items-center justify-center space-y-1">
                 <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                   bed
                 </span>
-                <span className="text-sm">{property.beds} Bed</span>
+                <span className="text-xs whitespace-nowrap">{property.beds} Bed</span>
               </div>
-              <div className="flex items-center justify-center space-x-1">
+              <div className="flex flex-col items-center justify-center space-y-1">
                 <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                   shower
                 </span>
-                <span className="text-sm">{property.baths} Bath</span>
+                <span className="text-xs whitespace-nowrap">{property.baths} Bath</span>
               </div>
-              <div className="flex items-center justify-center space-x-1">
+              <div className="flex flex-col items-center justify-center space-y-1">
                 <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                   kitchen
                 </span>
-                <span className="text-sm">{property.kitchens || 1} Kit</span>
+                <span className="text-xs whitespace-nowrap">{property.kitchens || 1} Kit</span>
               </div>
-              <div className="flex items-center justify-center space-x-1">
+              <div className="flex flex-col items-center justify-center space-y-1">
                 <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                   square_foot
                 </span>
-                <span className="text-sm">{property.sqft} sq</span>
+                <span className="text-xs whitespace-nowrap">{property.sqft} sq</span>
               </div>
             </div>
           </div>
@@ -229,30 +229,30 @@ const PropertyDetails = ({ property, showOnlyMain, showOnlyDescription, isFullsc
 
         {/* Property features */}
         <div className="mt-4 border-t border-ios-dark-separator pt-4">
-          <div className="grid grid-cols-4 gap-1 text-base text-ios-dark-label">
-            <div className="flex items-center justify-center space-x-1">
+          <div className="grid grid-cols-4 gap-2 text-base text-ios-dark-label">
+            <div className="flex flex-col items-center justify-center space-y-1">
               <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                 bed
               </span>
-              <span className="text-sm">{property.beds} Bed</span>
+              <span className="text-xs whitespace-nowrap">{property.beds} Bed</span>
             </div>
-            <div className="flex items-center justify-center space-x-1">
+            <div className="flex flex-col items-center justify-center space-y-1">
               <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                 shower
               </span>
-              <span className="text-sm">{property.baths} Bath</span>
+              <span className="text-xs whitespace-nowrap">{property.baths} Bath</span>
             </div>
-            <div className="flex items-center justify-center space-x-1">
+            <div className="flex flex-col items-center justify-center space-y-1">
               <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                 kitchen
               </span>
-              <span className="text-sm">{property.kitchens || 1} Kit</span>
+              <span className="text-xs whitespace-nowrap">{property.kitchens || 1} Kit</span>
             </div>
-            <div className="flex items-center justify-center space-x-1">
+            <div className="flex flex-col items-center justify-center space-y-1">
               <span className="material-symbols-outlined text-ios-dark-secondary-label text-lg">
                 square_foot
               </span>
-              <span className="text-sm">{property.sqft} sq</span>
+              <span className="text-xs whitespace-nowrap">{property.sqft} sq</span>
             </div>
           </div>
         </div>
