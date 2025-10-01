@@ -85,6 +85,11 @@ const ImageCarousel = ({ images, title }) => {
             key={image.id}
             className="flex-shrink-0 w-full h-full bg-cover bg-center snap-center"
             style={{ backgroundImage: `url("${image.url}")` }}
+            role="img"
+            aria-label={image.name || `Property image ${index + 1}`}
+            onError={(e) => {
+              e.target.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            }}
           />
         ))}
       </div>

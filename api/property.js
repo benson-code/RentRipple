@@ -1,4 +1,28 @@
 import { kv } from '@vercel/kv'
+import { JSDOM } from 'jsdom'
+import DOMPurify from 'dompurify'
+
+// Initialize DOMPurify for server-side
+const window = new JSDOM('').window
+const purify = DOMPurify(window)
+
+// Sanitize function
+function sanitizeInput(input) {
+  if (typeof input === 'string') {
+    return purify.sanitize(input, { ALLOWED_TAGS: [] })
+  }
+  if (Array.isArray(input)) {
+    return input.map(sanitizeInput)
+  }
+  if (typeof input === 'object' && input !== null) {
+    const sanitized = {}
+    for (const key in input) {
+      sanitized[key] = sanitizeInput(input[key])
+    }
+    return sanitized
+  }
+  return input
+}
 
 // 預設房屋數據
 const defaultPropertyData = {
@@ -109,12 +133,22 @@ export default async function handler(req, res) {
           })
         }
 
+        // Sanitize all input fields to prevent XSS
+        const sanitizedProperty = sanitizeInput(updatedProperty)
+
+        // Additional validation
+        if (typeof sanitizedProperty.price !== 'number' || sanitizedProperty.price < 0) {
+          return res.status(400).json({
+            error: 'Invalid price value'
+          })
+        }
+
         // 儲存到 KV
-        await kv.set('property', updatedProperty)
+        await kv.set('property', sanitizedProperty)
 
         return res.status(200).json({
           message: 'Property updated successfully',
-          property: updatedProperty
+          property: sanitizedProperty
         })
 
       case 'DELETE':
