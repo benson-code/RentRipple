@@ -10,7 +10,7 @@ const ImageCarousel = ({ images, title }) => {
       const itemWidth = carouselRef.current.offsetWidth
       carouselRef.current.scrollTo({
         left: itemWidth * index,
-        behavior: 'smooth'
+        behavior: 'smooth',
       })
     }
   }
@@ -42,7 +42,7 @@ const ImageCarousel = ({ images, title }) => {
   }
 
   const handleRoomClick = (roomId) => {
-    const index = images.findIndex(img => img.id === roomId)
+    const index = images.findIndex((img) => img.id === roomId)
     if (index !== -1) {
       setCurrentIndex(index)
       scrollToImage(index)
@@ -87,9 +87,6 @@ const ImageCarousel = ({ images, title }) => {
             style={{ backgroundImage: `url("${image.url}")` }}
             role="img"
             aria-label={image.name || `Property image ${index + 1}`}
-            onError={(e) => {
-              e.target.style.backgroundImage = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-            }}
           />
         ))}
       </div>
@@ -111,8 +108,6 @@ const ImageCarousel = ({ images, title }) => {
           />
         ))}
       </div>
-
-
     </div>
   )
 }

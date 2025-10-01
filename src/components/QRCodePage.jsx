@@ -22,8 +22,8 @@ const QRCodePage = () => {
         margin: 2,
         color: {
           dark: '#000000',
-          light: '#FFFFFF'
-        }
+          light: '#FFFFFF',
+        },
       })
       setQrCodeUrl(qrDataURL)
       setUseOfficialQR(false)
@@ -98,9 +98,7 @@ const QRCodePage = () => {
       {/* QR Code Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="text-center mb-8">
-          <h2 className="text-xl font-bold text-ios-dark-label mb-2">
-            Scan to Contact
-          </h2>
+          <h2 className="text-xl font-bold text-ios-dark-label mb-2">Scan to Contact</h2>
           <p className="text-ios-dark-secondary-label text-base">
             Scan the QR code below to get in touch with us
           </p>

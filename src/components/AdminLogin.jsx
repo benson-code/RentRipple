@@ -44,11 +44,11 @@ const AdminLogin = ({ onLogin }) => {
         <div className="w-full max-w-sm">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-              isPasswordConfigured
-                ? 'bg-primary-blue'
-                : 'bg-red-500/80'
-            }`}>
+            <div
+              className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                isPasswordConfigured ? 'bg-primary-blue' : 'bg-red-500/80'
+              }`}
+            >
               <span className="material-symbols-outlined text-white text-2xl">
                 {isPasswordConfigured ? 'admin_panel_settings' : 'warning'}
               </span>
@@ -59,8 +59,7 @@ const AdminLogin = ({ onLogin }) => {
             <p className="text-ios-dark-secondary-label text-sm">
               {isPasswordConfigured
                 ? 'Enter password to access admin panel'
-                : 'Admin password has not been configured'
-              }
+                : 'Admin password has not been configured'}
             </p>
           </div>
 
@@ -70,11 +69,23 @@ const AdminLogin = ({ onLogin }) => {
             <div className="space-y-4">
               <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
                 <div className="flex items-start space-x-3">
-                  <span className="material-symbols-outlined text-red-400 text-xl mt-0.5">info</span>
+                  <span className="material-symbols-outlined text-red-400 text-xl mt-0.5">
+                    info
+                  </span>
                   <div className="flex-1">
-                    <h3 className="text-red-400 font-semibold text-sm mb-2">Environment Variable Missing</h3>
+                    <h3 className="text-red-400 font-semibold text-sm mb-2">
+                      Environment Variable Missing
+                    </h3>
                     <p className="text-ios-dark-secondary-label text-xs leading-relaxed">
-                      Please set <code className="bg-ios-dark-secondary-background px-2 py-0.5 rounded text-primary-blue">VITE_ADMIN_PASSWORD</code> in your environment variables or <code className="bg-ios-dark-secondary-background px-2 py-0.5 rounded text-primary-blue">.env.local</code> file.
+                      Please set{' '}
+                      <code className="bg-ios-dark-secondary-background px-2 py-0.5 rounded text-primary-blue">
+                        VITE_ADMIN_PASSWORD
+                      </code>{' '}
+                      in your environment variables or{' '}
+                      <code className="bg-ios-dark-secondary-background px-2 py-0.5 rounded text-primary-blue">
+                        .env.local
+                      </code>{' '}
+                      file.
                     </p>
                   </div>
                 </div>
@@ -82,17 +93,30 @@ const AdminLogin = ({ onLogin }) => {
 
               <div className="bg-ios-dark-secondary-background/50 border border-ios-dark-separator rounded-xl p-4">
                 <h4 className="text-ios-dark-label font-semibold text-sm mb-3 flex items-center space-x-2">
-                  <span className="material-symbols-outlined text-lg">integration_instructions</span>
+                  <span className="material-symbols-outlined text-lg">
+                    integration_instructions
+                  </span>
                   <span>Setup Instructions</span>
                 </h4>
                 <ol className="text-xs text-ios-dark-secondary-label space-y-2 ml-1">
                   <li className="flex items-start space-x-2">
                     <span className="text-primary-blue font-bold">1.</span>
-                    <span>Create a <code className="bg-ios-dark-background px-1.5 py-0.5 rounded">.env.local</code> file in the project root</span>
+                    <span>
+                      Create a{' '}
+                      <code className="bg-ios-dark-background px-1.5 py-0.5 rounded">
+                        .env.local
+                      </code>{' '}
+                      file in the project root
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-primary-blue font-bold">2.</span>
-                    <span>Add: <code className="bg-ios-dark-background px-1.5 py-0.5 rounded">VITE_ADMIN_PASSWORD=your-secure-password</code></span>
+                    <span>
+                      Add:{' '}
+                      <code className="bg-ios-dark-background px-1.5 py-0.5 rounded">
+                        VITE_ADMIN_PASSWORD=your-secure-password
+                      </code>
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-primary-blue font-bold">3.</span>
@@ -157,8 +181,7 @@ const AdminLogin = ({ onLogin }) => {
             <p className="text-xs text-ios-dark-tertiary-label">
               {isPasswordConfigured
                 ? 'Protected admin access for authorized users only'
-                : 'For production deployment, set environment variables in Vercel Dashboard'
-              }
+                : 'For production deployment, set environment variables in Vercel Dashboard'}
             </p>
           </div>
         </div>

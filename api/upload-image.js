@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     'https://rentripple-hfpzzodi4-ethan-alexander-warricks-projects.vercel.app',
     'https://rentripple-7wdzonhcj-ethan-alexander-warricks-projects.vercel.app',
     'http://localhost:3000', // 開發環境
-    'http://localhost:5173'  // Vite開發服務器
+    'http://localhost:5173', // Vite開發服務器
   ]
 
   const origin = req.headers.origin
@@ -45,7 +45,9 @@ export default async function handler(req, res) {
     // 移除 data URL 前綴並驗證格式
     const dataUrlMatch = imageData.match(/^data:(image\/(jpeg|jpg|png|gif|webp));base64,(.+)$/)
     if (!dataUrlMatch) {
-      return res.status(400).json({ error: 'Invalid image format. Only JPEG, PNG, GIF, WebP allowed' })
+      return res
+        .status(400)
+        .json({ error: 'Invalid image format. Only JPEG, PNG, GIF, WebP allowed' })
     }
 
     const contentType = dataUrlMatch[1] // e.g., 'image/jpeg', 'image/png'
@@ -88,14 +90,13 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       url: blob.url,
-      fileName: fileName
+      fileName: fileName,
     })
-
   } catch (error) {
     console.error('Upload error:', error)
     return res.status(500).json({
       error: 'Upload failed',
-      details: error.message
+      details: error.message,
     })
   }
 }

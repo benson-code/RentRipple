@@ -71,10 +71,7 @@ const PropertyShowcase = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       {/* 固定圖片區域 */}
       <div className="flex-shrink-0">
-        <ImageCarousel
-          images={property.images}
-          title={property.title}
-        />
+        <ImageCarousel images={property.images} title={property.title} />
       </div>
 
       {/* 固定的主要物業資訊區域 */}
@@ -94,7 +91,11 @@ const PropertyShowcase = () => {
       {/* 底部空白區域保持整體布局 */}
       <div className="flex-1"></div>
 
-      <ContactFooter price={property.price} currency={property.currency} priceUnit={property.priceUnit} />
+      <ContactFooter
+        price={property.price}
+        currency={property.currency}
+        priceUnit={property.priceUnit}
+      />
     </div>
   )
 }

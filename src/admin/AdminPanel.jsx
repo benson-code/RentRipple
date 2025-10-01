@@ -5,39 +5,39 @@ import AdminLogin from '../components/AdminLogin'
 
 const AdminPanel = () => {
   const [property, setProperty] = useState({
-    title: "Cozy MRT Apartment",
-    address: "Bang Ao, Bang Phlat, Bangkok 10700",
+    title: 'Cozy MRT Apartment',
+    address: 'Bang Ao, Bang Phlat, Bangkok 10700',
     price: 13000,
-    currency: "฿",
-    priceUnit: "month",
+    currency: '฿',
+    priceUnit: 'month',
     beds: 1,
     baths: 1,
     kitchens: 1,
     sqft: 22.5,
-    qrCodeUrl: "https://qr-official.line.me/gs/M_220xvrzg_BW.png?oat_content=qr",
+    qrCodeUrl: 'https://qr-official.line.me/gs/M_220xvrzg_BW.png?oat_content=qr',
 
-    buildingName: "Chapter One Spark Charan",
+    buildingName: 'Chapter One Spark Charan',
     description: {
-      roomInfo: "Premium 1 room (7F 22.5sqft).",
-      location: "150m to MRT07 BangPhlat station & nearby Bangsue station.",
+      roomInfo: 'Premium 1 room (7F 22.5sqft).',
+      location: '150m to MRT07 BangPhlat station & nearby Bangsue station.',
       highlights: [
-        "Fitness center • Pool • Convenience downstairs",
-        "International hospital • Lotus nearby"
-      ]
+        'Fitness center • Pool • Convenience downstairs',
+        'International hospital • Lotus nearby',
+      ],
     },
     locationFeatures: [
-      "2-min walk to MRT station",
-      "Multiple convenience stores nearby",
-      "Close to shopping centers",
-      "Restaurants & cafes nearby"
+      '2-min walk to MRT station',
+      'Multiple convenience stores nearby',
+      'Close to shopping centers',
+      'Restaurants & cafes nearby',
     ],
     leaseTerms: [
-      "Minimum lease: 1 year",
-      "Security deposit: 2 months rent",
-      "Management fee: Included in rent",
-      "Pet-friendly (upon discussion)"
+      'Minimum lease: 1 year',
+      'Security deposit: 2 months rent',
+      'Management fee: Included in rent',
+      'Pet-friendly (upon discussion)',
     ],
-    images: []
+    images: [],
   })
 
   const [isUploading, setIsUploading] = useState(false)
@@ -148,16 +148,15 @@ const AdminPanel = () => {
             const newImage = {
               id: roomName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
               name: roomName,
-              url: uploadResult.url // 使用上傳後的真實 URL
+              url: uploadResult.url, // 使用上傳後的真實 URL
             }
 
             const updatedProperty = {
               ...property,
-              images: [...property.images, newImage]
+              images: [...property.images, newImage],
             }
             setProperty(updatedProperty)
             setHasUnsavedChanges(true)
-
           } catch (uploadError) {
             console.error('Upload failed:', uploadError)
             alert('圖片上傳失敗，請稍後再試')
@@ -177,7 +176,7 @@ const AdminPanel = () => {
   const removeImage = (imageId) => {
     const updatedProperty = {
       ...property,
-      images: property.images.filter(img => img.id !== imageId)
+      images: property.images.filter((img) => img.id !== imageId),
     }
     setProperty(updatedProperty)
     setHasUnsavedChanges(true)
@@ -205,12 +204,19 @@ const AdminPanel = () => {
         <div className="flex flex-col space-y-4 mb-8">
           {/* Top Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
-            <Link to="/" className="flex items-center space-x-3 text-primary-blue hover:text-primary-blue/80 transition-colors group">
-              <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+            <Link
+              to="/"
+              className="flex items-center space-x-3 text-primary-blue hover:text-primary-blue/80 transition-colors group"
+            >
+              <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">
+                arrow_back
+              </span>
               <span className="text-base font-medium">Back to Property</span>
             </Link>
             <div className="flex items-center space-x-4">
-              <h1 className="text-xl sm:text-2xl font-bold font-sf-pro-display text-ios-dark-label">Admin Panel</h1>
+              <h1 className="text-xl sm:text-2xl font-bold font-sf-pro-display text-ios-dark-label">
+                Admin Panel
+              </h1>
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
@@ -227,8 +233,12 @@ const AdminPanel = () => {
             <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
               {lastSaved && (
                 <div className="flex items-center space-x-2 text-ios-dark-secondary-label">
-                  <span className="material-symbols-outlined text-green-500 text-lg">check_circle</span>
-                  <span className="text-sm">Last saved: {lastSaved.toLocaleTimeString('en-US', { hour12: false })}</span>
+                  <span className="material-symbols-outlined text-green-500 text-lg">
+                    check_circle
+                  </span>
+                  <span className="text-sm">
+                    Last saved: {lastSaved.toLocaleTimeString('en-US', { hour12: false })}
+                  </span>
                 </div>
               )}
               {hasUnsavedChanges && (
@@ -269,13 +279,17 @@ const AdminPanel = () => {
         <div className="bg-ios-dark-secondary-background/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-ios-dark-separator/30 shadow-xl">
           <div className="flex items-center space-x-3 mb-6">
             <span className="material-symbols-outlined text-primary-blue text-2xl">home</span>
-            <h2 className="text-xl font-bold font-sf-pro-display text-ios-dark-label">Property Details</h2>
+            <h2 className="text-xl font-bold font-sf-pro-display text-ios-dark-label">
+              Property Details
+            </h2>
           </div>
 
           <div className="grid gap-6">
             {/* Basic Information Group */}
             <div className="space-y-4">
-              <h3 className="text-base font-semibold text-ios-dark-label border-b border-ios-dark-separator/30 pb-2">Basic Information</h3>
+              <h3 className="text-base font-semibold text-ios-dark-label border-b border-ios-dark-separator/30 pb-2">
+                Basic Information
+              </h3>
               <div>
                 <label className="flex items-center space-x-2 text-sm font-medium text-ios-dark-secondary-label mb-3">
                   <span className="material-symbols-outlined text-lg">title</span>
@@ -405,8 +419,12 @@ const AdminPanel = () => {
         {/* Content Management */}
         <div className="bg-ios-dark-secondary-background/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-ios-dark-separator/30 shadow-xl">
           <div className="flex items-center space-x-3 mb-6">
-            <span className="material-symbols-outlined text-primary-blue text-2xl">description</span>
-            <h2 className="text-xl font-bold font-sf-pro-display text-ios-dark-label">Property Content</h2>
+            <span className="material-symbols-outlined text-primary-blue text-2xl">
+              description
+            </span>
+            <h2 className="text-xl font-bold font-sf-pro-display text-ios-dark-label">
+              Property Content
+            </h2>
           </div>
 
           <div className="grid gap-6">
@@ -437,7 +455,7 @@ const AdminPanel = () => {
                   handleInputChange('description', {
                     ...property.description,
                     roomInfo: roomInfo,
-                    location: location
+                    location: location,
                   })
                 }}
                 placeholder="Enter room information, separate location description with two empty lines&#10;&#10;Example:&#10;Premium 1 room (7F 22.5sqft).&#10;&#10;150m to MRT07 BangPhlat station & nearby Bangsue station."
@@ -456,7 +474,7 @@ const AdminPanel = () => {
               <textarea
                 value={property.description?.highlights?.join('\n') || ''}
                 onChange={(e) => {
-                  const highlights = e.target.value.split('\n').filter(line => line.trim())
+                  const highlights = e.target.value.split('\n').filter((line) => line.trim())
                   handleInputChange('description', { ...property.description, highlights })
                 }}
                 className="w-full bg-ios-dark-background text-ios-dark-label border border-ios-dark-separator rounded-xl px-3 py-2 h-20"
@@ -471,7 +489,7 @@ const AdminPanel = () => {
               <textarea
                 value={property.locationFeatures?.join('\n') || ''}
                 onChange={(e) => {
-                  const features = e.target.value.split('\n').filter(line => line.trim())
+                  const features = e.target.value.split('\n').filter((line) => line.trim())
                   handleInputChange('locationFeatures', features)
                 }}
                 className="w-full bg-ios-dark-background text-ios-dark-label border border-ios-dark-separator rounded-xl px-3 py-2 h-24"
@@ -486,7 +504,7 @@ const AdminPanel = () => {
               <textarea
                 value={property.leaseTerms?.join('\n') || ''}
                 onChange={(e) => {
-                  const terms = e.target.value.split('\n').filter(line => line.trim())
+                  const terms = e.target.value.split('\n').filter((line) => line.trim())
                   handleInputChange('leaseTerms', terms)
                 }}
                 className="w-full bg-ios-dark-background text-ios-dark-label border border-ios-dark-separator rounded-xl px-3 py-2 h-24"
@@ -514,7 +532,10 @@ const AdminPanel = () => {
 
           <div className="space-y-3">
             {property.images.map((image, index) => (
-              <div key={image.id} className="flex items-center space-x-3 bg-ios-dark-background rounded-xl p-3">
+              <div
+                key={image.id}
+                className="flex items-center space-x-3 bg-ios-dark-background rounded-xl p-3"
+              >
                 <img
                   src={image.url}
                   alt={image.name}

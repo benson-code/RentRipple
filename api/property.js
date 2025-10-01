@@ -26,53 +26,53 @@ function sanitizeInput(input) {
 
 // 預設房屋數據
 const defaultPropertyData = {
-  title: "Cozy MRT Apartment",
-  address: "Bang Ao, Bang Phlat, Bangkok 10700",
+  title: 'Cozy MRT Apartment',
+  address: 'Bang Ao, Bang Phlat, Bangkok 10700',
   price: 13000,
-  currency: "฿",
-  priceUnit: "month",
+  currency: '฿',
+  priceUnit: 'month',
   beds: 1,
   baths: 1,
   kitchens: 1,
   sqft: 22.5,
-  qrCodeUrl: "https://qr-official.line.me/gs/M_220xvrzg_BW.png?oat_content=qr",
+  qrCodeUrl: 'https://qr-official.line.me/gs/M_220xvrzg_BW.png?oat_content=qr',
 
-  buildingName: "Chapter One Spark Charan",
+  buildingName: 'Chapter One Spark Charan',
   description: {
-    roomInfo: "Premium 1 room (7F 22.5sqft).",
-    location: "150m to MRT07 BangPhlat station & nearby Bangsue station.",
+    roomInfo: 'Premium 1 room (7F 22.5sqft).',
+    location: '150m to MRT07 BangPhlat station & nearby Bangsue station.',
     highlights: [
-      "Fitness center • Pool • Convenience downstairs",
-      "International hospital • Lotus nearby"
-    ]
+      'Fitness center • Pool • Convenience downstairs',
+      'International hospital • Lotus nearby',
+    ],
   },
   amenities: [
-    { icon: "fitness_center", name: "Gym" },
-    { icon: "pool", name: "Pool" },
-    { icon: "business_center", name: "Workspace" },
-    { icon: "ac_unit", name: "A/C" },
-    { icon: "local_laundry_service", name: "Laundry" },
-    { icon: "kitchen", name: "Kitchen" }
+    { icon: 'fitness_center', name: 'Gym' },
+    { icon: 'pool', name: 'Pool' },
+    { icon: 'business_center', name: 'Workspace' },
+    { icon: 'ac_unit', name: 'A/C' },
+    { icon: 'local_laundry_service', name: 'Laundry' },
+    { icon: 'kitchen', name: 'Kitchen' },
   ],
   locationFeatures: [
-    "2-min walk to MRT station",
-    "Multiple convenience stores nearby",
-    "Close to shopping centers",
-    "Restaurants & cafes nearby"
+    '2-min walk to MRT station',
+    'Multiple convenience stores nearby',
+    'Close to shopping centers',
+    'Restaurants & cafes nearby',
   ],
   leaseTerms: [
-    "Minimum lease: 1 year",
-    "Security deposit: 2 months rent",
-    "Management fee: Included in rent",
-    "Pet-friendly (upon discussion)"
+    'Minimum lease: 1 year',
+    'Security deposit: 2 months rent',
+    'Management fee: Included in rent',
+    'Pet-friendly (upon discussion)',
   ],
   images: [
     {
-      id: "living_room",
-      name: "Living Room",
-      url: "https://bangkokmrt.vercel.app/og-image.jpg"
-    }
-  ]
+      id: 'living_room',
+      name: 'Living Room',
+      url: 'https://bangkokmrt.vercel.app/og-image.jpg',
+    },
+  ],
 }
 
 export default async function handler(req, res) {
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     'https://rentripple-hfpzzodi4-ethan-alexander-warricks-projects.vercel.app',
     'https://rentripple-7wdzonhcj-ethan-alexander-warricks-projects.vercel.app',
     'http://localhost:3000', // 開發環境
-    'http://localhost:5173'  // Vite開發服務器
+    'http://localhost:5173', // Vite開發服務器
   ]
 
   const origin = req.headers.origin
@@ -109,7 +109,7 @@ export default async function handler(req, res) {
 
   try {
     switch (req.method) {
-      case 'GET':
+      case 'GET': {
         // 獲取房屋數據
         let property = await kv.get('property')
 
@@ -120,16 +120,17 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(property)
+      }
 
       case 'POST':
-      case 'PUT':
+      case 'PUT': {
         // 更新房屋數據
         const updatedProperty = req.body
 
         // 驗證必要欄位
         if (!updatedProperty.title || !updatedProperty.price) {
           return res.status(400).json({
-            error: 'Missing required fields: title and price are required'
+            error: 'Missing required fields: title and price are required',
           })
         }
 
@@ -139,7 +140,7 @@ export default async function handler(req, res) {
         // Additional validation
         if (typeof sanitizedProperty.price !== 'number' || sanitizedProperty.price < 0) {
           return res.status(400).json({
-            error: 'Invalid price value'
+            error: 'Invalid price value',
           })
         }
 
@@ -148,8 +149,9 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
           message: 'Property updated successfully',
-          property: sanitizedProperty
+          property: sanitizedProperty,
         })
+      }
 
       case 'DELETE':
         // 重置為預設數據
@@ -157,7 +159,7 @@ export default async function handler(req, res) {
 
         return res.status(200).json({
           message: 'Property reset to default',
-          property: defaultPropertyData
+          property: defaultPropertyData,
         })
 
       default:
@@ -167,7 +169,7 @@ export default async function handler(req, res) {
     console.error('API Error:', error)
     return res.status(500).json({
       error: 'Internal server error',
-      details: error.message
+      details: error.message,
     })
   }
 }
