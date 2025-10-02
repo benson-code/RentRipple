@@ -5,8 +5,10 @@ const PropertyDetails = ({
   isFullscreen,
   onToggleFullscreen,
 }) => {
-  // Debug logging
-  console.log('PropertyDetails received property:', property)
+  // Debug logging (development only)
+  if (import.meta.env.DEV) {
+    console.log('PropertyDetails received property:', property)
+  }
 
   // 只顯示主要物業資訊（標題、地址、房型資訊）
   if (showOnlyMain) {
@@ -262,7 +264,7 @@ const PropertyDetails = ({
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
         }}
       >
-        <h1 className="text-2xl font-bold font-sf-pro-display text-ios-dark-label">
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold font-sf-pro-display text-ios-dark-label">
           {property.title}
         </h1>
         <p className="text-base text-ios-dark-secondary-label mt-1">{property.address}</p>

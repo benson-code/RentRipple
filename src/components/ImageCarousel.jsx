@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-const ImageCarousel = ({ images, title }) => {
+const ImageCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const carouselRef = useRef(null)
   const scrollTimeout = useRef(null)

@@ -34,9 +34,11 @@ const QRCodePage = () => {
 
   // Handle official QR code load error
   const handleQRError = (e) => {
-    console.log('Official QR code failed to load, generating fallback...')
-    console.log('Error details:', e)
-    console.log('Failed URL:', e.target.src)
+    if (import.meta.env.DEV) {
+      console.log('Official QR code failed to load, generating fallback...')
+      console.log('Error details:', e)
+      console.log('Failed URL:', e.target.src)
+    }
     generateFallbackQRCode()
   }
 
@@ -44,28 +46,38 @@ const QRCodePage = () => {
     // Load QR Code URL from property data
     const loadQRCode = async () => {
       try {
-        console.log('Loading property data for QR code...')
+        if (import.meta.env.DEV) {
+          console.log('Loading property data for QR code...')
+        }
         const property = await getProperty()
         const dynamicQrUrl = property.qrCodeUrl
 
         if (dynamicQrUrl) {
-          console.log('Using dynamic QR URL:', dynamicQrUrl)
+          if (import.meta.env.DEV) {
+            console.log('Using dynamic QR URL:', dynamicQrUrl)
+          }
           setQrCodeUrl(dynamicQrUrl)
           setUseOfficialQR(true)
         } else {
           // Fallback to local image
-          console.log('No dynamic QR URL, trying local image')
+          if (import.meta.env.DEV) {
+            console.log('No dynamic QR URL, trying local image')
+          }
           const localUrl = '/line-qr.png'
           const img = new Image()
 
           img.onload = () => {
-            console.log('Using local LINE QR code')
+            if (import.meta.env.DEV) {
+              console.log('Using local LINE QR code')
+            }
             setQrCodeUrl(localUrl)
             setUseOfficialQR(true)
           }
 
           img.onerror = () => {
-            console.log('Local QR not found, generating fallback')
+            if (import.meta.env.DEV) {
+              console.log('Local QR not found, generating fallback')
+            }
             generateFallbackQRCode()
           }
 
@@ -113,9 +125,11 @@ const QRCodePage = () => {
               className="w-64 h-64 mx-auto"
               onError={handleQRError}
               onLoad={(e) => {
-                console.log('QR code loaded successfully')
-                console.log('Loaded URL:', e.target.src)
-                console.log('Using official QR:', useOfficialQR)
+                if (import.meta.env.DEV) {
+                  console.log('QR code loaded successfully')
+                  console.log('Loaded URL:', e.target.src)
+                  console.log('Using official QR:', useOfficialQR)
+                }
               }}
             />
           ) : (
