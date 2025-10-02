@@ -21,7 +21,7 @@ const PropertyDetails = ({
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
           }}
         >
-          <h1 className="text-xl md:text-2xl font-bold font-sf-pro-display text-ios-dark-label">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold font-sf-pro-display text-ios-dark-label">
             {property.title}
           </h1>
           <p className="text-base text-ios-dark-secondary-label mt-1">{property.address}</p>
