@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { propertyData } from '../data/propertyData'
 import { getProperty } from '../utils/propertyAPI'
 import ImageCarousel from './ImageCarousel'

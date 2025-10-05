@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getProperty, updateProperty, uploadImage } from '../utils/propertyAPI'
 import AdminLogin from '../components/AdminLogin'
@@ -41,7 +41,6 @@ const AdminPanel = () => {
   })
 
   const [isUploading, setIsUploading] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [lastSaved, setLastSaved] = useState(null)
@@ -77,14 +76,11 @@ const AdminPanel = () => {
   useEffect(() => {
     const loadProperty = async () => {
       try {
-        setIsLoading(true)
         const propertyData = await getProperty()
         setProperty(propertyData)
       } catch (error) {
         console.error('Error loading property:', error)
         // 使用預設數據作為後備
-      } finally {
-        setIsLoading(false)
       }
     }
 

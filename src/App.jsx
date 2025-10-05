@@ -1,4 +1,3 @@
-import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import PropertyShowcase from './components/PropertyShowcase'
 import AdminPanel from './admin/AdminPanel'

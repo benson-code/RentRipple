@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 const ImageCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const carouselRef = useRef(null)
   const scrollTimeout = useRef(null)
 
-  const scrollToImage = (index) => {
+  const scrollToImage = useCallback((index) => {
     if (carouselRef.current) {
       const itemWidth = carouselRef.current.offsetWidth
       carouselRef.current.scrollTo({
@@ -13,9 +13,9 @@ const ImageCarousel = ({ images }) => {
         behavior: 'smooth',
       })
     }
-  }
+  }, [])
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (carouselRef.current) {
       // 清除之前的超時
       if (scrollTimeout.current) {
@@ -33,21 +33,24 @@ const ImageCarousel = ({ images }) => {
           const activeIndex = Math.round(rawIndex)
 
           // 只在索引真正改變時才更新狀態，並確保索引有效
-          if (activeIndex !== currentIndex && activeIndex >= 0 && activeIndex < images.length) {
+          if (activeIndex >= 0 && activeIndex < images.length) {
             setCurrentIndex(activeIndex)
           }
         }
       }, 25) // 減少到 25ms 提升響應性
     }
-  }
+  }, [images.length])
 
-  const handleRoomClick = (roomId) => {
-    const index = images.findIndex((img) => img.id === roomId)
-    if (index !== -1) {
-      setCurrentIndex(index)
-      scrollToImage(index)
-    }
-  }
+  const handleRoomClick = useCallback(
+    (roomId) => {
+      const index = images.findIndex((img) => img.id === roomId)
+      if (index !== -1) {
+        setCurrentIndex(index)
+        scrollToImage(index)
+      }
+    },
+    [images, scrollToImage]
+  )
 
   useEffect(() => {
     const carousel = carouselRef.current
@@ -71,7 +74,7 @@ const ImageCarousel = ({ images }) => {
         }
       }
     }
-  }, [images, currentIndex]) // 添加 currentIndex 依賴項解決閉包問題
+  }, [handleScroll, handleRoomClick])
 
   return (
     <div className="relative w-full h-[45vh] overflow-hidden">
