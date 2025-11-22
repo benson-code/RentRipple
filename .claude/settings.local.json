@@ -37,7 +37,12 @@
       "Bash(git push:*)",
       "WebFetch(domain:bangkokmrt-dhyz8d635-ethan-alexander-warricks-projects.vercel.app)",
       "Bash(npm run lint)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(git log:*)",
+      "WebFetch(domain:bangkokmrt-4sa631qb7-ethan-alexander-warricks-projects.vercel.app)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

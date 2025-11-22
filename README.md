@@ -15,6 +15,11 @@ RentRipple 是一個專為曼谷捷運沿線物業設計的現代化展示平台
 
 ## 🌏 繁體中文
 
+### 📋 專案簡介
+
+**RentRipple** 是一個專為曼谷捷運沿線物業設計的現代化展示平台。結合了優雅的 iOS 風格界面設計和強大的管理功能，為房地產展示提供完整的解決方案。
+
+> 📘 **詳細技術規格**: 請參閱 [規格說明書 (SPECIFICATION.md)](./SPECIFICATION.md) 以獲取完整的系統架構、API 文件與資料模型說明。
 ### ✨ 主要特色
 
 - 📱 **行動優先設計**: 針對 iPhone 和行動裝置優化的 iOS 風格介面，注重使用者體驗細節。
@@ -133,6 +138,11 @@ rentripple/
 
 ## 🌍 English
 
+### 📋 Project Overview
+
+**RentRipple** is a modern property showcase platform specifically designed for properties along Bangkok's MRT lines. It combines elegant iOS-style interface design with powerful management features to provide a complete solution for real estate presentation.
+
+> 📘 **Technical Specifications**: Please refer to the [Specification Document (SPECIFICATION.md)](./SPECIFICATION.md) for complete system architecture, API documentation, and data models.
 ### ✨ Key Features
 
 - 📱 **Mobile-First Design**: iOS-style interface optimized for iPhone and mobile devices with meticulous attention to UX.

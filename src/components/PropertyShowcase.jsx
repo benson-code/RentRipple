@@ -2,29 +2,30 @@ import { useState, useEffect } from 'react'
 import { propertyData } from '../data/propertyData'
 import { getProperty } from '../utils/propertyAPI'
 import ImageCarousel from './ImageCarousel'
-import PropertyDetails from './PropertyDetails'
+import PropertyMainInfo from './PropertyMainInfo'
+import PropertyDescriptionCard from './PropertyDescriptionCard'
+import PropertyDescriptionFullscreen from './PropertyDescriptionFullscreen'
 import ContactFooter from './ContactFooter'
 
 const PropertyShowcase = () => {
   const [property, setProperty] = useState(propertyData)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const loadProperty = async () => {
       try {
         setIsLoading(true)
+        setError(null)
         // 添加時間戳避免緩存問題
         const timestamp = Date.now()
         const propertyData = await getProperty(`?t=${timestamp}`)
         setProperty(propertyData)
-      } catch (error) {
-        console.error('Error loading property:', error)
-        // 嘗試從 localStorage 載入備份
-        const savedProperty = localStorage.getItem('rentRippleProperty')
-        if (savedProperty) {
-          setProperty(JSON.parse(savedProperty))
-        }
+      } catch (err) {
+        console.error('Error loading property:', err)
+        // API 失敗時不顯示錯誤頁面，而是使用預設數據
+        // setError('無法載入房產資訊。請檢查您的網路連線並稍後再試。')
       } finally {
         setIsLoading(false)
       }
@@ -35,6 +36,19 @@ const PropertyShowcase = () => {
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen)
+  }
+
+  // 錯誤狀態
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-ios-dark-background">
+        <div className="text-center text-red-400 px-4">
+          <span className="material-symbols-outlined text-5xl mb-4">error</span>
+          <h1 className="text-xl font-bold mb-2">發生錯誤</h1>
+          <p className="text-ios-dark-secondary-label">{error}</p>
+        </div>
+      </div>
+    )
   }
 
   // 載入狀態
@@ -55,10 +69,8 @@ const PropertyShowcase = () => {
       <div className="fixed inset-0 z-50 bg-ios-dark-background fullscreen-enter">
         {/* 全螢幕物業介紹 */}
         <div className="h-full overflow-y-auto ios-scroll">
-          <PropertyDetails
+          <PropertyDescriptionFullscreen
             property={property}
-            showOnlyDescription={true}
-            isFullscreen={true}
             onToggleFullscreen={toggleFullscreen}
           />
         </div>
@@ -76,14 +88,13 @@ const PropertyShowcase = () => {
 
       {/* 固定的主要物業資訊區域 */}
       <div className="flex-shrink-0">
-        <PropertyDetails property={property} showOnlyMain={true} />
+        <PropertyMainInfo property={property} />
       </div>
 
       {/* 固定的物業介紹區域 */}
       <div className="flex-shrink-0">
-        <PropertyDetails
+        <PropertyDescriptionCard
           property={property}
-          showOnlyDescription={true}
           onToggleFullscreen={toggleFullscreen}
         />
       </div>
