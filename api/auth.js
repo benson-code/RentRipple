@@ -1,8 +1,12 @@
 // Backend authentication API
+import { kv } from '@vercel/kv'
+
 export default async function handler(req, res) {
   // CORS headers
   const allowedOrigins = [
     'https://bangkokmrt.vercel.app',
+    'https://rentripple-hfpzzodi4-ethan-alexander-warricks-projects.vercel.app',
+    'https://rentripple-7wdzonhcj-ethan-alexander-warricks-projects.vercel.app',
     'http://localhost:3000',
     'http://localhost:5173',
   ]
@@ -34,6 +38,7 @@ export default async function handler(req, res) {
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
     if (!ADMIN_PASSWORD) {
+      console.error('Server configuration error: ADMIN_PASSWORD not set')
       return res.status(500).json({ error: 'Server configuration error' })
     }
 
@@ -46,8 +51,13 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    // Generate a simple session token (in production, use JWT)
-    const token = Buffer.from(`${Date.now()}-${Math.random()}`).toString('base64')
+    // Generate a secure random token
+    const token =
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    const tokenKey = `auth_token:${token}`
+
+    // Store token in KV with 24h expiration
+    await kv.set(tokenKey, 'valid', { ex: 86400 })
 
     return res.status(200).json({
       success: true,

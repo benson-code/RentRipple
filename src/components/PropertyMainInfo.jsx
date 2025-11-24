@@ -46,7 +46,7 @@ const PropertyMainInfo = ({ property }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PropertyMainInfo;
+export default PropertyMainInfo

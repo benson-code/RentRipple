@@ -38,9 +38,7 @@ const PropertyDescriptionFullscreen = ({ property, onToggleFullscreen }) => {
             </p>
           </div>
           <div className="text-base text-ios-dark-secondary-label leading-relaxed">
-            <p className="mb-3">
-              {property.description?.location || property.location}
-            </p>
+            <p className="mb-3">{property.description?.location || property.location}</p>
           </div>
           <div className="border-t border-ios-dark-separator/30 pt-4">
             <div className="text-base text-ios-dark-secondary-label leading-relaxed space-y-2">
@@ -57,7 +55,10 @@ const PropertyDescriptionFullscreen = ({ property, onToggleFullscreen }) => {
             <h3 className="text-lg font-semibold text-ios-dark-label mb-4">Amenities</h3>
             <div className="grid grid-cols-3 gap-3 text-sm text-ios-dark-secondary-label">
               {property.amenities.map((amenity, index) => (
-                <div key={index} className="flex flex-col items-center space-y-2 p-3 rounded-xl bg-ios-dark-background/30">
+                <div
+                  key={index}
+                  className="flex flex-col items-center space-y-2 p-3 rounded-xl bg-ios-dark-background/30"
+                >
                   <span className="material-symbols-outlined text-xl text-ios-dark-label">
                     {amenity.icon || 'help'}
                   </span>
@@ -93,7 +94,7 @@ const PropertyDescriptionFullscreen = ({ property, onToggleFullscreen }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PropertyDescriptionFullscreen;
+export default PropertyDescriptionFullscreen

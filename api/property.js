@@ -24,6 +24,20 @@ function sanitizeInput(input) {
   return input
 }
 
+// Helper function to verify token
+async function verifyToken(req) {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false
+  }
+
+  const token = authHeader.split(' ')[1]
+  const tokenKey = `auth_token:${token}`
+  const isValid = await kv.get(tokenKey)
+
+  return !!isValid
+}
+
 // 預設房屋數據
 const defaultPropertyData = {
   title: 'Cozy MRT Apartment',
@@ -124,6 +138,12 @@ export default async function handler(req, res) {
 
       case 'POST':
       case 'PUT': {
+        // Verify authentication
+        const isAuthorized = await verifyToken(req)
+        if (!isAuthorized) {
+          return res.status(401).json({ error: 'Unauthorized' })
+        }
+
         // 更新房屋數據
         const updatedProperty = req.body
 
@@ -154,6 +174,12 @@ export default async function handler(req, res) {
       }
 
       case 'DELETE':
+        // Verify authentication
+        const isAuthorizedDelete = await verifyToken(req)
+        if (!isAuthorizedDelete) {
+          return res.status(401).json({ error: 'Unauthorized' })
+        }
+
         // 重置為預設數據
         await kv.set('property', defaultPropertyData)
 

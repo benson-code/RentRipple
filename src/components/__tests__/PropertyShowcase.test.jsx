@@ -5,7 +5,13 @@ import PropertyShowcase from '../PropertyShowcase'
 import * as propertyAPI from '../../utils/propertyAPI'
 
 // Mock the propertyAPI module
-vi.mock('../../utils/propertyAPI')
+// Mock the propertyAPI module
+vi.mock('../../utils/propertyAPI', () => ({
+  getProperty: vi.fn(),
+  updateProperty: vi.fn(),
+  resetProperty: vi.fn(),
+  uploadImage: vi.fn(),
+}))
 
 // Mock child components
 vi.mock('../ImageCarousel', () => ({
@@ -16,14 +22,24 @@ vi.mock('../ImageCarousel', () => ({
   ),
 }))
 
-vi.mock('../PropertyDetails', () => ({
-  default: ({ property, showOnlyMain, showOnlyDescription }) => (
-    <div data-testid="property-details">
-      {showOnlyMain && 'Main Details'}
-      {showOnlyDescription && 'Description'}
-      {property.title}
+vi.mock('../PropertyMainInfo', () => ({
+  default: ({ property }) => (
+    <div data-testid="property-main-info">
+      Main Info: {property.title}
     </div>
   ),
+}))
+
+vi.mock('../PropertyDescriptionCard', () => ({
+  default: ({ property }) => (
+    <div data-testid="property-description-card">
+      Description Card
+    </div>
+  ),
+}))
+
+vi.mock('../PropertyDescriptionFullscreen', () => ({
+  default: () => <div data-testid="property-description-fullscreen">Fullscreen</div>,
 }))
 
 vi.mock('../ContactFooter', () => ({
@@ -58,7 +74,7 @@ describe('PropertyShowcase', () => {
   }
 
   it('shows loading state initially', () => {
-    propertyAPI.getProperty.mockImplementation(() => new Promise(() => {})) // Never resolves
+    propertyAPI.getProperty.mockImplementation(() => new Promise(() => { })) // Never resolves
 
     renderWithRouter(<PropertyShowcase />)
     expect(screen.getByText('載入中...')).toBeInTheDocument()
@@ -103,7 +119,7 @@ describe('PropertyShowcase', () => {
     })
 
     // Should use localStorage data
-    expect(screen.getByText(/Saved Property/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Saved Property/).length).toBeGreaterThan(0)
   })
 
   it('renders ImageCarousel with property images', async () => {
@@ -148,7 +164,8 @@ describe('PropertyShowcase', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('image-carousel')).toBeInTheDocument()
-      expect(screen.getAllByTestId('property-details')).toHaveLength(2) // Main + Description
+      expect(screen.getByTestId('property-main-info')).toBeInTheDocument()
+      expect(screen.getByTestId('property-description-card')).toBeInTheDocument()
       expect(screen.getByTestId('contact-footer')).toBeInTheDocument()
     })
   })

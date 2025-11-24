@@ -24,7 +24,16 @@ const PropertyShowcase = () => {
         setProperty(propertyData)
       } catch (err) {
         console.error('Error loading property:', err)
-        // API 失敗時不顯示錯誤頁面，而是使用預設數據
+        // API 失敗時嘗試從 localStorage 讀取備份
+        const savedProperty = localStorage.getItem('rentRippleProperty')
+        if (savedProperty) {
+          try {
+            setProperty(JSON.parse(savedProperty))
+          } catch (parseError) {
+            console.error('Error parsing saved property:', parseError)
+          }
+        }
+        // API 失敗時不顯示錯誤頁面，而是使用預設數據 (或 localStorage 數據)
         // setError('無法載入房產資訊。請檢查您的網路連線並稍後再試。')
       } finally {
         setIsLoading(false)
@@ -93,10 +102,7 @@ const PropertyShowcase = () => {
 
       {/* 固定的物業介紹區域 */}
       <div className="flex-shrink-0">
-        <PropertyDescriptionCard
-          property={property}
-          onToggleFullscreen={toggleFullscreen}
-        />
+        <PropertyDescriptionCard property={property} onToggleFullscreen={toggleFullscreen} />
       </div>
 
       {/* 底部空白區域保持整體布局 */}

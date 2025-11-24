@@ -1,4 +1,19 @@
 import { put } from '@vercel/blob'
+import { kv } from '@vercel/kv'
+
+// Helper function to verify token
+async function verifyToken(req) {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false
+  }
+
+  const token = authHeader.split(' ')[1]
+  const tokenKey = `auth_token:${token}`
+  const isValid = await kv.get(tokenKey)
+
+  return !!isValid
+}
 
 export default async function handler(req, res) {
   // 設定 CORS 標頭 - 限制來源
@@ -29,6 +44,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Verify authentication
+    const isAuthorized = await verifyToken(req)
+    if (!isAuthorized) {
+      return res.status(401).json({ error: 'Unauthorized' })
+    }
+
     // 從請求體中獲取 base64 圖片數據
     const { imageData, imageName } = req.body
 

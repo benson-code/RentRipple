@@ -29,17 +29,26 @@ export const getProperty = async (queryParams = '') => {
 }
 
 // 更新房屋數據
-export const updateProperty = async (propertyData) => {
+export const updateProperty = async (propertyData, token) => {
   try {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
     const response = await fetch(`${API_BASE}/api/property`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: JSON.stringify(propertyData),
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Unauthorized')
+      }
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
@@ -52,13 +61,23 @@ export const updateProperty = async (propertyData) => {
 }
 
 // 重置房屋數據
-export const resetProperty = async () => {
+export const resetProperty = async (token) => {
   try {
+    const headers = {}
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
     const response = await fetch(`${API_BASE}/api/property`, {
       method: 'DELETE',
+      headers: headers,
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Unauthorized')
+      }
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
@@ -71,13 +90,19 @@ export const resetProperty = async () => {
 }
 
 // 上傳圖片
-export const uploadImage = async (imageData, imageName) => {
+export const uploadImage = async (imageData, imageName, token) => {
   try {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
     const response = await fetch(`${API_BASE}/api/upload-image`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: JSON.stringify({
         imageData,
         imageName,
@@ -85,6 +110,9 @@ export const uploadImage = async (imageData, imageName) => {
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Unauthorized')
+      }
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 

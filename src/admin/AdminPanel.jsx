@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getProperty, updateProperty, uploadImage } from '../utils/propertyAPI'
 import AdminLogin from '../components/AdminLogin'
+import Modal from '../components/Modal'
 
 const AdminPanel = () => {
   const [property, setProperty] = useState({
@@ -45,6 +46,36 @@ const AdminPanel = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [lastSaved, setLastSaved] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  // Modal State
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info', // info, success, error
+    onConfirm: null,
+  })
+
+  const [uploadModal, setUploadModal] = useState({
+    isOpen: false,
+    roomName: '',
+    file: null,
+    imageData: null,
+  })
+
+  const showModal = (title, message, type = 'info', onConfirm = null) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      type,
+      onConfirm,
+    })
+  }
+
+  const closeModal = () => {
+    setModalConfig((prev) => ({ ...prev, isOpen: false }))
+  }
 
   // Check authentication on component mount
   useEffect(() => {
@@ -92,15 +123,20 @@ const AdminPanel = () => {
   const saveProperty = async () => {
     try {
       setIsSaving(true)
-      await updateProperty(property)
+      const token = sessionStorage.getItem('authToken')
+      await updateProperty(property, token)
       // 也保存到 localStorage 作為備份
       localStorage.setItem('rentRippleProperty', JSON.stringify(property))
       setHasUnsavedChanges(false)
       setLastSaved(new Date())
-      alert('Saved successfully!')
+      showModal('Success', 'Property saved successfully!', 'success')
     } catch (error) {
       console.error('Error saving property:', error)
-      alert('Save failed, please try again later')
+      if (error.message === 'Unauthorized') {
+        handleLogout()
+        return
+      }
+      showModal('Error', 'Save failed, please try again later', 'error')
     } finally {
       setIsSaving(false)
     }
@@ -118,6 +154,7 @@ const AdminPanel = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem('adminAuthenticated')
+    sessionStorage.removeItem('authToken')
     sessionStorage.removeItem('loginTime')
     setIsAuthenticated(false)
     setHasUnsavedChanges(false)
@@ -127,45 +164,60 @@ const AdminPanel = () => {
     const file = event.target.files[0]
     if (!file) return
 
+    // Read file first to show preview or just prepare for upload
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setUploadModal({
+        isOpen: true,
+        roomName: '',
+        file: file,
+        imageData: e.target.result,
+      })
+    }
+    reader.readAsDataURL(file)
+
+    // Reset file input
+    event.target.value = ''
+  }
+
+  const confirmImageUpload = async () => {
+    if (!uploadModal.roomName) return
+
     setIsUploading(true)
+    setUploadModal((prev) => ({ ...prev, isOpen: false }))
 
     try {
-      // Create a FileReader to convert image to base64 for upload
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const imageData = e.target.result
-        const roomName = prompt('Enter room name (e.g., Living Room, Bedroom, Kitchen):')
+      const token = sessionStorage.getItem('authToken')
+      // 上傳圖片到 Vercel Blob
+      const uploadResult = await uploadImage(
+        uploadModal.imageData,
+        `${uploadModal.roomName}_${uploadModal.file.name}`,
+        token
+      )
 
-        if (roomName) {
-          try {
-            // 上傳圖片到 Vercel Blob
-            const uploadResult = await uploadImage(imageData, `${roomName}_${file.name}`)
-
-            const newImage = {
-              id: roomName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
-              name: roomName,
-              url: uploadResult.url, // 使用上傳後的真實 URL
-            }
-
-            const updatedProperty = {
-              ...property,
-              images: [...property.images, newImage],
-            }
-            setProperty(updatedProperty)
-            setHasUnsavedChanges(true)
-          } catch (uploadError) {
-            console.error('Upload failed:', uploadError)
-            alert('圖片上傳失敗，請稍後再試')
-          }
-        }
-        setIsUploading(false)
+      const newImage = {
+        id: uploadModal.roomName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now(),
+        name: uploadModal.roomName,
+        url: uploadResult.url, // 使用上傳後的真實 URL
       }
 
-      reader.readAsDataURL(file)
-    } catch (error) {
-      console.error('Error handling image upload:', error)
-      alert('處理圖片時出錯，請稍後再試')
+      const updatedProperty = {
+        ...property,
+        images: [...property.images, newImage],
+      }
+      setProperty(updatedProperty)
+      setHasUnsavedChanges(true)
+      showModal('Success', 'Image uploaded successfully!', 'success')
+    } catch (uploadError) {
+      console.error('Upload failed:', uploadError)
+      if (uploadError.message === 'Unauthorized') {
+        handleLogout()
+        return
+      }
+      showModal('Error', 'Image upload failed, please try again later', 'error')
+    } finally {
       setIsUploading(false)
+      setUploadModal({ isOpen: false, roomName: '', file: null, imageData: null })
     }
   }
 
@@ -248,13 +300,12 @@ const AdminPanel = () => {
             <button
               onClick={saveProperty}
               disabled={isSaving || !hasUnsavedChanges}
-              className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center space-x-2 ${
-                isSaving
+              className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center space-x-2 ${isSaving
                   ? 'bg-gray-500 text-white cursor-not-allowed'
                   : hasUnsavedChanges
                     ? 'bg-primary-blue text-white hover:bg-primary-blue/90 hover:scale-105 shadow-lg'
                     : 'bg-ios-dark-separator/50 text-ios-dark-tertiary-label cursor-not-allowed'
-              }`}
+                }`}
             >
               {isSaving ? (
                 <>
@@ -578,6 +629,56 @@ const AdminPanel = () => {
           </div>
         </div>
       </div>
+
+      {/* General Modal */}
+      <Modal
+        isOpen={modalConfig.isOpen}
+        onClose={closeModal}
+        title={modalConfig.title}
+        actions={[
+          {
+            label: 'OK',
+            onClick: () => {
+              if (modalConfig.onConfirm) modalConfig.onConfirm()
+              closeModal()
+            },
+            isPrimary: true,
+          },
+        ]}
+      >
+        <p>{modalConfig.message}</p>
+      </Modal>
+
+      {/* Upload Modal */}
+      <Modal
+        isOpen={uploadModal.isOpen}
+        onClose={() => setUploadModal((prev) => ({ ...prev, isOpen: false }))}
+        title="Name this Image"
+        actions={[
+          {
+            label: 'Cancel',
+            onClick: () => setUploadModal((prev) => ({ ...prev, isOpen: false })),
+            isDestructive: true,
+          },
+          {
+            label: 'Upload',
+            onClick: confirmImageUpload,
+            isPrimary: true,
+          },
+        ]}
+      >
+        <div className="space-y-4">
+          <p>Enter a name for this room or area:</p>
+          <input
+            type="text"
+            value={uploadModal.roomName}
+            onChange={(e) => setUploadModal((prev) => ({ ...prev, roomName: e.target.value }))}
+            placeholder="e.g. Living Room"
+            className="w-full bg-ios-dark-background/50 border border-ios-dark-separator rounded-lg px-3 py-2 text-center focus:outline-none focus:border-primary-blue"
+            autoFocus
+          />
+        </div>
+      </Modal>
     </div>
   )
 }

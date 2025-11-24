@@ -38,7 +38,7 @@ const PropertyDescriptionCard = ({ property, onToggleFullscreen }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PropertyDescriptionCard;
+export default PropertyDescriptionCard

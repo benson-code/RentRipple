@@ -56,24 +56,19 @@ describe('propertyAPI', () => {
       expect(callUrl).toContain('?custom=param')
     })
 
-    it('returns default data on fetch error', async () => {
+    it('throws error on fetch error', async () => {
       fetch.mockRejectedValueOnce(new Error('Network error'))
 
-      const result = await getProperty()
-      expect(result).toHaveProperty('title')
-      expect(result).toHaveProperty('price')
-      expect(result.title).toBe('Cozy MRT Apartment')
+      await expect(getProperty()).rejects.toThrow('Network error')
     })
 
-    it('returns default data on HTTP error', async () => {
+    it('throws error on HTTP error', async () => {
       fetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
       })
 
-      const result = await getProperty()
-      expect(result).toHaveProperty('title')
-      expect(result.price).toBe(13000)
+      await expect(getProperty()).rejects.toThrow('HTTP error! status: 500')
     })
 
     it('sets no-cache headers', async () => {
@@ -116,6 +111,27 @@ describe('propertyAPI', () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(propertyData),
+        })
+      )
+    })
+
+    it('includes authorization header when token is provided', async () => {
+      const propertyData = { title: 'Test' }
+      const token = 'test-token'
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true }),
+      })
+
+      await updateProperty(propertyData, token)
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-token',
+          }),
         })
       )
     })
