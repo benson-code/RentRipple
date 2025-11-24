@@ -65,12 +65,10 @@ RentRipple 是一個專為曼谷捷運沿線物業設計的現代化展示平台
 
 | 變數                      | 說明                                       |
 | ------------------------- | ------------------------------------------ |
-| `VITE_ADMIN_PASSWORD`     | 管理員登入密碼 (前端使用)                  |
 | `ADMIN_PASSWORD`          | 管理員登入密碼 (後端 API 驗證使用)         |
 | `KV_REST_API_URL`         | Vercel KV 資料庫的 API URL                 |
 | `KV_REST_API_TOKEN`       | Vercel KV 資料庫的 Token                   |
 | `BLOB_READ_WRITE_TOKEN`   | Vercel Blob Storage 的 Token               |
-
 
 4.  **啟動開發伺服器**
     ```bash
@@ -150,7 +148,7 @@ rentripple/
 - 👨‍💼 **Admin Dashboard**: User-friendly property management interface with full CRUD functionality and image uploads.
 - 📱 **QR Code Integration**: Auto-generates unique QR codes for each property, ideal for offline marketing and sharing.
 - ☁️ **Serverless Architecture**: Built on Vercel Serverless Functions, KV (Redis), and Blob Storage for scalability and cost-efficiency.
-- 🔒 **Enterprise-Grade Security**: Features built-in XSS protection, backend authentication, and brute-force prevention.
+- 🔒 **Enterprise-Grade Security**: Features built-in XSS protection, backend authentication (JWT/Token-based), and brute-force prevention.
 - 🧪 **Comprehensive Test Coverage**: Ensures the stability of core features using Vitest and Testing Library.
 
 ### 🛠️ Tech Stack
@@ -188,7 +186,6 @@ rentripple/
 
 | Variable                  | Description                                |
 | ------------------------- | ------------------------------------------ |
-| `VITE_ADMIN_PASSWORD`     | Admin login password (for frontend)        |
 | `ADMIN_PASSWORD`          | Admin login password (for backend API auth)|
 | `KV_REST_API_URL`         | API URL for your Vercel KV database        |
 | `KV_REST_API_TOKEN`       | Token for your Vercel KV database          |
